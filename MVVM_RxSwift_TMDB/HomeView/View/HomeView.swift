@@ -77,8 +77,8 @@ extension HomeView: UITableViewDataSource {
         let row = indexPath.row
         if let item = viewModel?.moviesArray[row] {
             var content = cell.defaultContentConfiguration()
-            content.text = "Título: \(item)"
-            content.secondaryText = "Subtítulo: \(item)"
+            content.text = item.title
+            content.secondaryText = item.sinopsis
             cell.contentConfiguration = content
         }
         

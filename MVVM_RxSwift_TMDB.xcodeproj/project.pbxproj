@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		071C3C4A2799B89000CB9420 /* ManagerConnections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071C3C492799B89000CB9420 /* ManagerConnections.swift */; };
+		071C3C4C2799BAF300CB9420 /* Movies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071C3C4B2799BAF300CB9420 /* Movies.swift */; };
+		071C3C4F2799C04F00CB9420 /* PopularMoviesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071C3C4E2799C04F00CB9420 /* PopularMoviesRepository.swift */; };
+		071C3C532799C3B700CB9420 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071C3C522799C3B700CB9420 /* Errors.swift */; };
 		07998DA527987DC100B36E3F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07998DA427987DC100B36E3F /* AppDelegate.swift */; };
 		07998DA727987DC100B36E3F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07998DA627987DC100B36E3F /* SceneDelegate.swift */; };
 		07998DAE27987DC200B36E3F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 07998DAD27987DC200B36E3F /* Assets.xcassets */; };
@@ -22,6 +26,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		071C3C492799B89000CB9420 /* ManagerConnections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagerConnections.swift; sourceTree = "<group>"; };
+		071C3C4B2799BAF300CB9420 /* Movies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movies.swift; sourceTree = "<group>"; };
+		071C3C4E2799C04F00CB9420 /* PopularMoviesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopularMoviesRepository.swift; sourceTree = "<group>"; };
+		071C3C522799C3B700CB9420 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		07998DA127987DC100B36E3F /* MVVM_RxSwift_TMDB.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MVVM_RxSwift_TMDB.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		07998DA427987DC100B36E3F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		07998DA627987DC100B36E3F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -52,6 +60,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		071C3C482799B86F00CB9420 /* NetworkManager */ = {
+			isa = PBXGroup;
+			children = (
+				071C3C492799B89000CB9420 /* ManagerConnections.swift */,
+			);
+			path = NetworkManager;
+			sourceTree = "<group>";
+		};
+		071C3C4D2799C03800CB9420 /* Repository */ = {
+			isa = PBXGroup;
+			children = (
+				071C3C4E2799C04F00CB9420 /* PopularMoviesRepository.swift */,
+			);
+			path = Repository;
+			sourceTree = "<group>";
+		};
 		07998D9827987DC100B36E3F = {
 			isa = PBXGroup;
 			children = (
@@ -75,6 +99,7 @@
 			children = (
 				07998DA427987DC100B36E3F /* AppDelegate.swift */,
 				07998DA627987DC100B36E3F /* SceneDelegate.swift */,
+				071C3C482799B86F00CB9420 /* NetworkManager */,
 				07998DBA279884ED00B36E3F /* Resources */,
 				07998DB8279884C900B36E3F /* HomeView */,
 				07998DB9279884D400B36E3F /* DetailView */,
@@ -88,6 +113,7 @@
 		07998DB8279884C900B36E3F /* HomeView */ = {
 			isa = PBXGroup;
 			children = (
+				071C3C4D2799C03800CB9420 /* Repository */,
 				07998DC62798874B00B36E3F /* Router */,
 				07998DCC2798906800B36E3F /* Model */,
 				07998DC52798874200B36E3F /* View */,
@@ -109,6 +135,7 @@
 			isa = PBXGroup;
 			children = (
 				07998DBB2798850700B36E3F /* Constants.swift */,
+				071C3C522799C3B700CB9420 /* Errors.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -141,6 +168,7 @@
 		07998DCC2798906800B36E3F /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				071C3C4B2799BAF300CB9420 /* Movies.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -279,9 +307,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				07998DA527987DC100B36E3F /* AppDelegate.swift in Sources */,
+				071C3C4A2799B89000CB9420 /* ManagerConnections.swift in Sources */,
 				07998DC92798877A00B36E3F /* HomeRouter.swift in Sources */,
 				07998DCB27988DBD00B36E3F /* HomeViewModel.swift in Sources */,
+				071C3C4F2799C04F00CB9420 /* PopularMoviesRepository.swift in Sources */,
 				07998DBF2798866100B36E3F /* HomeView.swift in Sources */,
+				071C3C4C2799BAF300CB9420 /* Movies.swift in Sources */,
+				071C3C532799C3B700CB9420 /* Errors.swift in Sources */,
 				07998DA727987DC100B36E3F /* SceneDelegate.swift in Sources */,
 				07998DC32798867A00B36E3F /* DetailView.swift in Sources */,
 				07998DBC2798850700B36E3F /* Constants.swift in Sources */,
