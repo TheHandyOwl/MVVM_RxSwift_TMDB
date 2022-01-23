@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RxSwift
 
 
 // MARK: HomeViewProtocol
@@ -29,12 +30,20 @@ class HomeView: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        registerCell()
+        
         viewModel?.refreshMovieTable = {
             DispatchQueue.main.async { [weak self] in
                 self?.moviesTable.reloadData()
             }
         }
         viewModel?.viewDidLoad()
+    }
+    
+    private func registerCell() {
+        let nib = UINib(nibName: "CustomMovieCell", bundle: Bundle.main)
+        moviesTable.register(nib, forCellReuseIdentifier: "CustomMovieCellID")
+        moviesTable.rowHeight = UITableView.automaticDimension
     }
     
 }
@@ -71,16 +80,20 @@ extension HomeView: UITableViewDataSource {
         return viewModel?.moviesArray.count ?? 0
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 200
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: "CellID")
-        
         let row = indexPath.row
-        if let item = viewModel?.moviesArray[row] {
-            var content = cell.defaultContentConfiguration()
-            content.text = item.title
-            content.secondaryText = item.sinopsis
-            cell.contentConfiguration = content
-        }
+        
+        let cellID = Constants.Views.CustomMovieCell.cellID
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as? CustomMovieCell
+        
+        guard let cell = cell, let viewModel = viewModel else { return UITableViewCell() }
+        
+        let item = viewModel.moviesArray[row]
+        cell.configureCell(viewModel: viewModel, movie: item)
         
         return cell
     }

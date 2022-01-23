@@ -11,7 +11,7 @@ class PopularMoviesRepository {
     
     func getPopularMovies(success: @escaping ([Movie])->(), failure: @escaping (Error)->()) {
         let urlString = "\(Constants.API.URL.urlMainSite)\(Constants.API.Endpoints.urlEndpointListMovies)\(Constants.API.apiKeyBridge)\(Constants.API.apiKeyValue)"//\(Constants.API.Params.paramPage)\(page)
-        print("URL - getPopularMovies: \(urlString)")
+        //print("URL - getPopularMovies: \(urlString)")
         
         ManagerConnections.shared.fetchData(urlString: urlString) { data in
             do {

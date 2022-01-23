@@ -9,6 +9,7 @@ import Foundation
 
 enum NetworkErrors: Error {
     case decodingJSONError
+    case retrievingImage
     case statusCode401UnauthorizedError
     case statusCode403ForbiddenError
     case statusCode404NotFoundError

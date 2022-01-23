@@ -34,6 +34,19 @@ struct Constants {
     
     struct Views {
         
+        struct CustomMovieCell {
+            
+            static let cellID = "CustomMovieCellID"
+            static let nibName = "CustomMovieCell"
+            
+            struct Strings {
+                static let description = "description..."
+                static let moviePlaceholderImage = "xmark.octagon.fill"
+                static var title = "title..."
+            }
+            
+        }
+        
         struct HomeView {
             static let nibName = "HomeView"
         }
