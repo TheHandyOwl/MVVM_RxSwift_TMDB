@@ -9,13 +9,17 @@ import UIKit
 import RxSwift
 
 
+// MARK: HomeViewImageProtocol
+protocol HomeViewImageProtocol: AnyObject {
+    func getMovieImage(imageString: String) -> Observable<UIImage>?
+}
+
+
 // MARK: HomeViewProtocol
 protocol HomeViewProtocol : AnyObject {
     var viewModel: HomeViewModelInputProtocol? { get set }
     
-    func setupUI()
-    func startLoading()
-    func stopLoading()
+    func setupUI(appTitle: String)
 }
 
 
@@ -27,17 +31,31 @@ class HomeView: UIViewController {
     
     var viewModel: HomeViewModelInputProtocol?
     
+    private let disposeBag = DisposeBag()
+    private var filteredMoviesArray : [Movie] = []
+    private var moviesArray : [Movie] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         registerCell()
-        
-        viewModel?.refreshMovieTable = {
-            DispatchQueue.main.async { [weak self] in
-                self?.moviesTable.reloadData()
-            }
-        }
         viewModel?.viewDidLoad()
+        getData()
+    }
+    
+    private func getData() {
+        startLoading()
+        
+        viewModel?.getPopularMovies()?
+            .subscribe(onNext: { [weak self] movies in
+                self?.moviesArray = movies
+                self?.moviesTable.reloadData()
+            }, onError: { error in
+                print("Error: \(error.localizedDescription)")
+            }, onCompleted: { [weak self] in
+                self?.stopLoading()
+            }).disposed(by: disposeBag)
+        
     }
     
     private func registerCell() {
@@ -46,24 +64,14 @@ class HomeView: UIViewController {
         moviesTable.rowHeight = UITableView.automaticDimension
     }
     
-}
-
-
-// MARK: Extension - HomeViewProtocol
-extension HomeView: HomeViewProtocol {
-    
-    func setupUI() {
-        title = Constants.App.name
-    }
-    
-    func startLoading() {
+    private func startLoading() {
         DispatchQueue.main.async { [weak self] in
             self?.activityIndicator.isHidden = false
             self?.activityIndicator.startAnimating()
         }
     }
     
-    func stopLoading() {
+    private func stopLoading() {
         DispatchQueue.main.async { [weak self] in
             self?.activityIndicator.stopAnimating()
             self?.activityIndicator.hidesWhenStopped = true
@@ -73,11 +81,27 @@ extension HomeView: HomeViewProtocol {
 }
 
 
+// MARK: Extension - HomeViewImageProtocol
+extension HomeView: HomeViewImageProtocol {
+    func getMovieImage(imageString: String) -> Observable<UIImage>? {
+        return viewModel?.getMovieImage(imageString: imageString)
+    }
+}
+
+
+// MARK: Extension - HomeViewProtocol
+extension HomeView: HomeViewProtocol {
+    func setupUI(appTitle: String) {
+        self.title = appTitle
+    }
+}
+
+
 // MARK: Extension - UITableViewDataSource
 extension HomeView: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel?.moviesArray.count ?? 0
+        return moviesArray.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -90,10 +114,10 @@ extension HomeView: UITableViewDataSource {
         let cellID = Constants.Views.CustomMovieCell.cellID
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as? CustomMovieCell
         
-        guard let cell = cell, let viewModel = viewModel else { return UITableViewCell() }
+        guard let cell = cell else { return UITableViewCell() }
         
-        let item = viewModel.moviesArray[row]
-        cell.configureCell(viewModel: viewModel, movie: item)
+        let item = moviesArray[row]
+        cell.configureCell(mainView: self, movie: item)
         
         return cell
     }
@@ -101,14 +125,11 @@ extension HomeView: UITableViewDataSource {
 }
 
 
-
 // MARK: Extension - UITableViewDelegate
 extension HomeView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let viewModel = viewModel else { return }
-        
         let row = indexPath.row
-        let item = viewModel.moviesArray[row]
+        let item = moviesArray[row]
         
         print("Item: \(item)")
     }

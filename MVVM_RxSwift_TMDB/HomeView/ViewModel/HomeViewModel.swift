@@ -11,95 +11,34 @@ import RxSwift
 
 // MARK: HomeViewModelInputProtocol
 protocol HomeViewModelInputProtocol : AnyObject {
-    var moviesArray : [Movie] { get set }
-    var refreshMovieTable : (() -> ())? { get set }
+    var repository : HomeViewRepositoryProtocol? { get set }
     var router : HomeRouterProtocol? { get set }
     var view : HomeViewProtocol? { get set }
     
-    
-    func getMovieImage(imageString: String, success: @escaping (UIImage) -> ())
+    func getMovieImage(imageString: String) -> Observable<UIImage>?
+    func getPopularMovies() -> Observable<[Movie]>?
     func viewDidLoad()
 }
 
 
-// MARK: HomeViewModel
-class HomeViewModel {
-    
-    private var filteredMoviesArray : [Movie] = []
-    var moviesArray : [Movie] = [] {
-        didSet {
-            refreshMovieTable?()
-        }
-    }
-    
-    var refreshMovieTable : (() -> ())? = nil
+// MARK: HomeViewModel & HomeViewModelInputProtocol Extension
+class HomeViewModel: HomeViewModelInputProtocol {
+
+    var repository : HomeViewRepositoryProtocol?
     var router : HomeRouterProtocol?
     weak var view : HomeViewProtocol?
     
-    private let disposeBag = DisposeBag()
-    private let repository = PopularMoviesRepository()
-    
-    private func getMovies() {
-        DispatchQueue.global().async { [weak self] in
-            self?.repository.getPopularMovies { movies in
-                self?.moviesArray = movies
-            } failure: { error in
-                print("Error: \(error.localizedDescription)")
-            }
-            self?.view?.stopLoading()
-        }
+    func getMovieImage(imageString: String) -> Observable<UIImage>? {
+        return repository?.getMovieImage(imageString: imageString)
     }
     
-    private func getPopularMoviesWithRxSwift() {
-        DispatchQueue.global().async {
-            ManagerConnections.shared.getPopularMovies()
-            
-            // Manejar la concurrencia o hilos de RxSwift
-                .subscribe(on: MainScheduler.instance) // Trabajar en el hilo principal
-            
-            // Suscribirnos al observable
-                .observe(on: MainScheduler.instance) // Suscribirnos en el hilo principal
-            
-            // Dar por completada la secuencia de RxSwift
-                .subscribe(onNext: { [weak self] movies in
-                    self?.moviesArray = movies
-                }, onError: { [weak self] error in
-                    self?.moviesArray = []
-                    print("Error: \(error.localizedDescription)")
-                }, onCompleted: {
-                    // Nothing
-                }).disposed(by: self.disposeBag)
-            self.view?.stopLoading()
-        }
-    }
-    
-}
-
-
-// MARK: Extension - HomeViewModelInputProtocol
-extension HomeViewModel: HomeViewModelInputProtocol {
-    
-    func getMovieImage(imageString: String, success: @escaping (UIImage) -> ()) {
-        DispatchQueue.global().async {
-            ManagerConnections.shared.getMovieImage(imageString: imageString)
-                .observe(on: MainScheduler.instance)
-                .subscribe(on: MainScheduler.instance)
-                .subscribe { image in
-                    success(image)
-                } onError: { error in
-                    print("Error: \(error)")
-                } onCompleted: {
-                    // Nothing
-                }.disposed(by: self.disposeBag)
-
-        }
+    func getPopularMovies() -> Observable<[Movie]>? {
+        return repository?.getPopularMovies()
     }
     
     func viewDidLoad() {
-        view?.setupUI()
-        view?.startLoading()
-        //getMovies()
-        getPopularMoviesWithRxSwift()
+        let appTitle = Constants.App.name
+        view?.setupUI(appTitle: appTitle)
     }
     
 }
