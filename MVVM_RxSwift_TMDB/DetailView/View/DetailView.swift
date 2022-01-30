@@ -44,14 +44,14 @@ class DetailView: UIViewController {
         viewModel?.getMovieDetail(movieID: movieID)?
             .subscribe(
                 onNext: { movieDetail in
-                    print("movieDetail: \(movieDetail)")
+                    //print("movieDetail: \(movieDetail)")
                     self.refreshMovieDetail(movieDetail: movieDetail)
                 },
                 onError: { error in
                     print("Error: \(error.localizedDescription)")
                 },
                 onCompleted: {
-                    print("Movie loaded")
+                    //print("Movie loaded")
                 },
                 onDisposed: {
                 }).disposed(by: disposeBag)
@@ -77,7 +77,7 @@ class DetailView: UIViewController {
                     }, onError: { error in
                         print("Error: \(error.localizedDescription)")
                     }, onCompleted: {
-                        print("Image loaded")
+                        //print("Image loaded")
                     }, onDisposed: {
                     }).disposed(by: self.disposeBag)
             }
