@@ -12,6 +12,8 @@ import UIKit
 // MARK: HomeRouterProtocol
 protocol HomeRouterProtocol : AnyObject {
     var viewController : UIViewController { get }
+    
+    func goToMovieDetail(view: HomeViewProtocol, movieID: String)
 }
 
 
@@ -25,7 +27,7 @@ class HomeRouter: HomeRouterProtocol {
     private func createViewController() -> UIViewController {
         let view = HomeView(nibName: Constants.Views.HomeView.nibName, bundle: Bundle.main)
         
-        let repository : HomeViewRepositoryProtocol = HomeViewRepository()
+        let repository : HomeRepositoryProtocol = HomeRepository()
         let router : HomeRouterProtocol = HomeRouter()
         let viewModel : HomeViewModelInputProtocol = HomeViewModel()
         
@@ -35,6 +37,14 @@ class HomeRouter: HomeRouterProtocol {
         viewModel.view = view
         
         return view
+    }
+    
+    func goToMovieDetail(view: HomeViewProtocol, movieID: String) {
+        guard let oldView = view as? UIViewController else { return }
+        let newView = DetailRouter.createViewController(movieID: movieID)
+        
+        oldView.navigationController?.pushViewController(newView, animated: true)
+        
     }
     
 }

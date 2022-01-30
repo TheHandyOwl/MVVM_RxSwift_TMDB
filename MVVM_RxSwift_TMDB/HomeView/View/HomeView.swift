@@ -27,8 +27,8 @@ protocol HomeViewProtocol : AnyObject {
 // MARK: HomeView
 class HomeView: UIViewController {
     
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var moviesTable: UITableView!
+    @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet private weak var moviesTable: UITableView!
     
     var viewModel: HomeViewModelInputProtocol?
     
@@ -184,7 +184,8 @@ extension HomeView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let row = indexPath.row
         let item = searchController.isActive && searchController.searchBar.text != "" ? filteredMoviesArray[row] : moviesArray[row]
+        let movieID = String(item.movieID)
         
-        print("Item: \(item)")
+        viewModel?.goToMovieDetail(movieID: movieID)
     }
 }

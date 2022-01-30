@@ -1,5 +1,5 @@
 //
-//  HomeViewRepository.swift
+//  HomeRepository.swift
 //  MVVM_RxSwift_TMDB
 //
 //  Created by Carlos on 20/1/22.
@@ -9,15 +9,15 @@ import Foundation
 import RxSwift
 
 
-// MARK: HomeViewRepositoryProtocol
-protocol HomeViewRepositoryProtocol: AnyObject {
+// MARK: HomeRepositoryProtocol
+protocol HomeRepositoryProtocol: AnyObject {
     func getMovieImage(imageString: String) -> Observable<UIImage>
     func getPopularMovies() -> Observable<[Movie]>
 }
 
 
-// MARK: HomeViewRepositoryProtocol
-class HomeViewRepository: HomeViewRepositoryProtocol {
+// MARK: HomeRepositoryProtocol
+class HomeRepository: HomeRepositoryProtocol {
     
     func getMovieImage(imageString: String) -> Observable<UIImage> {
         let urlString = Constants.API.URL.urlMainImagesW200 + imageString
