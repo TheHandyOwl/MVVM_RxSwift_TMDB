@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RxCocoa
 import RxSwift
 
 
@@ -35,12 +36,20 @@ class HomeView: UIViewController {
     private var filteredMoviesArray : [Movie] = []
     private var moviesArray : [Movie] = []
     
+    
+    // MARK: lazy searchController
+    lazy private var searchController: UISearchController = {
+        ControllerFactory.shared.getUISearchController()
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         registerCell()
         viewModel?.viewDidLoad()
-        getData()
+        DispatchQueue.global().async {
+            self.getData()
+        }
     }
     
     private func getData() {
@@ -49,7 +58,9 @@ class HomeView: UIViewController {
         viewModel?.getPopularMovies()?
             .subscribe(onNext: { [weak self] movies in
                 self?.moviesArray = movies
-                self?.moviesTable.reloadData()
+                DispatchQueue.main.async {
+                    self?.moviesTable.reloadData()
+                }
             }, onError: { error in
                 print("Error: \(error.localizedDescription)")
             }, onCompleted: { [weak self] in
@@ -58,9 +69,35 @@ class HomeView: UIViewController {
         
     }
     
+    private func managerSearchBarController() {
+        searchController.delegate = self
+        
+        let searchBar = searchController.searchBar
+        searchBar.delegate = self
+        
+        searchBar.rx.text
+            //.observe(on: MainScheduler.instance)
+            //.subscribe(on: MainScheduler.instance)
+            .orEmpty
+            .distinctUntilChanged()
+            .subscribe(onNext: { movieString in
+                self.filteredMoviesArray = self.moviesArray
+                    .filter { movie in
+                        movie.title.lowercased().range(of: movieString.lowercased()) != nil
+                    }
+                DispatchQueue.main.async {
+                    self.moviesTable.reloadData()
+                }
+            }).disposed(by: disposeBag)
+        
+        
+        moviesTable.tableHeaderView = searchBar
+        moviesTable.contentOffset = CGPoint(x: 0, y: searchBar.frame.size.height)
+    }
+    
     private func registerCell() {
-        let nib = UINib(nibName: "CustomMovieCell", bundle: Bundle.main)
-        moviesTable.register(nib, forCellReuseIdentifier: "CustomMovieCellID")
+        let nib = UINib(nibName: Constants.Views.CustomMovieCell.nibName, bundle: Bundle.main)
+        moviesTable.register(nib, forCellReuseIdentifier: Constants.Views.CustomMovieCell.cellID)
         moviesTable.rowHeight = UITableView.automaticDimension
     }
     
@@ -93,7 +130,24 @@ extension HomeView: HomeViewImageProtocol {
 extension HomeView: HomeViewProtocol {
     func setupUI(appTitle: String) {
         self.title = appTitle
+        managerSearchBarController()
     }
+}
+
+
+// MARK: Extension - UISearchBarDelegate
+extension HomeView: UISearchBarDelegate {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchController.isActive = false
+        DispatchQueue.main.async {
+            self.moviesTable.reloadData()
+        }
+    }
+}
+
+
+// MARK: Extension - UISearchControllerDelegate
+extension HomeView: UISearchControllerDelegate {
 }
 
 
@@ -101,7 +155,7 @@ extension HomeView: HomeViewProtocol {
 extension HomeView: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return moviesArray.count
+        return searchController.isActive && searchController.searchBar.text != "" ? filteredMoviesArray.count : moviesArray.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -116,7 +170,7 @@ extension HomeView: UITableViewDataSource {
         
         guard let cell = cell else { return UITableViewCell() }
         
-        let item = moviesArray[row]
+        let item = searchController.isActive && searchController.searchBar.text != "" ? filteredMoviesArray[row] : moviesArray[row]
         cell.configureCell(mainView: self, movie: item)
         
         return cell
@@ -129,7 +183,7 @@ extension HomeView: UITableViewDataSource {
 extension HomeView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let row = indexPath.row
-        let item = moviesArray[row]
+        let item = searchController.isActive && searchController.searchBar.text != "" ? filteredMoviesArray[row] : moviesArray[row]
         
         print("Item: \(item)")
     }

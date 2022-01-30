@@ -49,6 +49,9 @@ struct Constants {
         
         struct HomeView {
             static let nibName = "HomeView"
+            struct SearchBarController {
+                static let placeholderString = "Buscar una película"
+            }
         }
         
         struct DetailView {
