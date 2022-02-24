@@ -12,7 +12,7 @@ import RxSwift
 // MARK: DetailViewModelInputProtocol
 protocol DetailViewModelInputProtocol : AnyObject {
     var repository : DetailRepositoryProtocol? { get set }
-    var router : DetailRouterProtocol? { get set }
+    var router : RouterCoordinatorProtocol? { get set }
     var view : DetailViewProtocol? { get set }
     
     func getMovieImage(imageString: String) -> Observable<UIImage>?
@@ -25,7 +25,7 @@ protocol DetailViewModelInputProtocol : AnyObject {
 class DetailViewModel: DetailViewModelInputProtocol {
 
     var repository : DetailRepositoryProtocol?
-    var router : DetailRouterProtocol?
+    var router : RouterCoordinatorProtocol?
     weak var view : DetailViewProtocol?
     
     func getMovieImage(imageString: String) -> Observable<UIImage>? {

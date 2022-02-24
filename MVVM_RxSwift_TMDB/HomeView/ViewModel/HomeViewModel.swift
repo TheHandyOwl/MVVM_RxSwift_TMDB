@@ -12,7 +12,7 @@ import RxSwift
 // MARK: HomeViewModelInputProtocol
 protocol HomeViewModelInputProtocol : AnyObject {
     var repository : HomeRepositoryProtocol? { get set }
-    var router : HomeRouterProtocol? { get set }
+    var router : RouterCoordinatorProtocol? { get set }
     var view : HomeViewProtocol? { get set }
     
     func getMovieImage(imageString: String) -> Observable<UIImage>?
@@ -26,7 +26,7 @@ protocol HomeViewModelInputProtocol : AnyObject {
 class HomeViewModel: HomeViewModelInputProtocol {
 
     var repository : HomeRepositoryProtocol?
-    var router : HomeRouterProtocol?
+    var router : RouterCoordinatorProtocol?
     weak var view : HomeViewProtocol?
     
     func getMovieImage(imageString: String) -> Observable<UIImage>? {
@@ -38,8 +38,7 @@ class HomeViewModel: HomeViewModelInputProtocol {
     }
     
     func goToMovieDetail(movieID: String) {
-        guard let view = view else { return }
-        router?.goToMovieDetail(view: view, movieID: movieID)
+        router?.goToDetailView(movieID: movieID)
     }
     
     func viewDidLoad() {
