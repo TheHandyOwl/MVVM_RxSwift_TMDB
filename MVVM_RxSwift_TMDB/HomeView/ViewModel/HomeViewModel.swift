@@ -6,42 +6,44 @@
 //
 
 import Foundation
+import RxSwift
 
 
 // MARK: HomeViewModelInputProtocol
 protocol HomeViewModelInputProtocol : AnyObject {
-    var moviesArray : [String] { get set }
-    var refreshMovieTable : (() -> ())? { get set }
-    var router : HomeRouterProtocol? { get set }
+    var repository : HomeRepositoryProtocol? { get set }
+    var router : RouterCoordinatorProtocol? { get set }
     var view : HomeViewProtocol? { get set }
     
+    func getMovieImage(imageString: String) -> Observable<UIImage>?
+    func getPopularMovies() -> Observable<[Movie]>?
+    func goToMovieDetail(movieID: String)
     func viewDidLoad()
 }
 
 
-// MARK: HomeViewModel
+// MARK: HomeViewModel & HomeViewModelInputProtocol Extension
 class HomeViewModel: HomeViewModelInputProtocol {
-    
+
+    var repository : HomeRepositoryProtocol?
+    var router : RouterCoordinatorProtocol?
     weak var view : HomeViewProtocol?
-    var router : HomeRouterProtocol?
     
-    var refreshMovieTable : (() -> ())? = nil
+    func getMovieImage(imageString: String) -> Observable<UIImage>? {
+        return repository?.getMovieImage(imageString: imageString)
+    }
     
-    var moviesArray : [String] = [] {
-        didSet {
-            refreshMovieTable?()
-        }
+    func getPopularMovies() -> Observable<[Movie]>? {
+        return repository?.getPopularMovies()
+    }
+    
+    func goToMovieDetail(movieID: String) {
+        router?.goToDetailView(movieID: movieID)
     }
     
     func viewDidLoad() {
-        moviesArray =  ["First movie", "Second movie"]
-        view?.setupUI()
-        view?.startLoading()
-        DispatchQueue.global().async { [weak self] in
-            sleep(2)
-            self?.moviesArray =  ["First movie", "Second movie", "Third movie", "Fourth movie"]
-            self?.view?.stopLoading()
-        }
+        let appTitle = Constants.App.name
+        view?.setupUI(appTitle: appTitle)
     }
     
 }
